@@ -130,21 +130,6 @@ function circular_wall.new(x, y, radius, mesh)
   return entity_id
 end
 
--- Updates the position of a circular wall.
--- @params entity_id: EntityID; the id of the circular wall, obtained by circular_Wall.new()
--- @params x: FixedPoint; the x component of the position to update to
--- @params y: FixedPoint; the y component of the position to update to
-function circular_wall.set_pos(entity_id, x, y)
-  circular_walls[entity_id].pos = {x, y}
-end
-
--- Updates the radius of a circular wall.
--- @params entity_id: EntityID; the id of the circular wall, obtained by circular_Wall.new()
--- @params radius: FixedPoint; the radius to update to
-function circular_wall.set_radius(entity_id, radius)
-  circular_walls[entity_id].radius = radius
-end
-
 -- Sets the mesh of a circular wall
 -- @params entity_id: EntityID; the id of the circular wall, obtained by circular_Wall.new()
 --[[
@@ -242,7 +227,7 @@ function circular_wall.random_position(entity_type)
 end
 
 -- Returns a random safe coordinate for spawning an entity of a specific type.
--- @params entity_type: EntityType the entity type of the entity that will be using the coordinates
+-- @params entity_radius: FixedPoint the radius of the entity that will be useing the coordinates
 function circular_wall.random_position_custom_radius(entity_radius)
   local x
   local y
@@ -322,7 +307,7 @@ local function clear_dead_walls()
   for entity_id, wall_information in pairs(circular_walls) do
     if not pewpew.entity_get_is_alive(entity_id) then
       -- Remove the walls used
-      for entity, wall_id in pairs(wall_information.temp_walls) do
+      for _, wall_id in pairs(wall_information.temp_walls) do
         pewpew.remove_wall(wall_id)
       end
 

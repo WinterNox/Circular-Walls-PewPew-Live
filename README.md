@@ -1,8 +1,8 @@
 # Circular Walls (PewPew Live)
 
-**Circular Walls** is a module that allows level creators to create almost perfect circular wall collisions in PewPew Live without using a lot of resources or needing more than the limit of 200 walls. It can be used extremely easily even by the people who have just stepped into level creation in PewPew Live. Though, keep in mind that this module only provides the functionality of circular walls and no visual elements. The mesh for the walls are to be created manually by the level creator.
+**Circular Walls** is a module that allows level creators to create almost perfect circular wall collisions in PewPew Live without using a lot of resources or needing more than the limit of 200 walls. It can be used extremely easily even by the people who have just stepped into level creation in PewPew Live.
 
-**Note: The module only provides the functionality of the walls, not any graphical elements are included.**
+**Note: The module only provides the functionality of the walls, without any graphical elements are included. The mesh for the walls are to be created manually by the level creator.**
 
 ## Installation
 
@@ -34,7 +34,6 @@ The module needs to be initialized through a certain function to fit the level's
     * `is_ufos_collision_enabled, is_rolling_cubes_collision_enabled`: Whether or not UFOs and Rolling Cubes have collision enabled
     * `level_width, level_height`: The level's width and height
 
-Example use
 ```lua
 circular_wall.init(
   configuration: table {
@@ -54,9 +53,26 @@ circular_wall.init(
 )
 ```
 
+**Example:**
+```lua
+circular_wall.init(
+  {
+    path = "/dynamic/helpers/"
+    max_speeds = {
+      [pewpew.EntityType.SHIP] = 24fx
+    }
+    maximum_radius_customizable_entity = 8fx,
+    is_ufos_collision_enabled = true,
+    is_rolling_cubes_collision_enabled = true,
+    level_width = 7200fx,
+    level_height = 480fx,
+  }
+)
+```
+
 ## Functions
 
-The module has some functions to create circular walls and also some functions to ease the process of development in a level that uses it. Here is the documentation for each of them:
+Along with the function to create circular walls, the module has some functions to ease the process of development in a level that uses it. Here is the documentation for each of them:
 
 ### `circular_wall.new()`
 ```lua
@@ -109,7 +125,7 @@ circular_wall.random_position_custom_radius(
   radius: FixedPoint
 ): FixedPoint, FixedPoint
 ```
-Returns a location for spawning an entity of type `pewpew.EntityType.CUSTOMIZABLE_ENTITY` such that it will not be inside any of the circular walls present in the level at that time. Returns the origin location if it fails to find a proper location in under 10,000 checks.
+Returns a location for spawning an entity of type `pewpew.EntityType.CUSTOMIZABLE_ENTITY` with collsion radius `radius` such that it will not be inside any of the circular walls present in the level at that time. Returns the origin location if it fails to find a proper location in under 10,000 checks.
 
 **Example:**
 ```lua
@@ -120,6 +136,7 @@ Here, the function `large.new(x: FixedPoint, y: FixedPoint)` creates an entity a
 
 ## Recommendations
 You should take into consideration the following recommendations:
-1. Add code for manual garbage collection every tick. Since the module makes the use of temporary walls to simulate collisions, it will take up a significant amount of memory. Usually, PewPew Live collects garbage incrementally. To ensure that the temporary walls are deleted from the memory as soon as they are not being used, you can call `collectgarbage("collect")` every tick in your update callback. This will ensure that the module does not limit your usage of memory unnecessarilly.
-
-2. If only few circular walls are required, it is better to just lay down an approximate polygonal wall instead of using this module.
+- Add code for manual garbage collection every tick. Since the module makes the use of temporary walls to simulate collisions, it will take up a significant amount of memory. Usually, PewPew Live collects garbage incrementally. To ensure that the temporary walls are deleted from the memory as soon as they are not being used, you can call `collectgarbage("collect")` every tick in your update callback. This will ensure that the module does not limit your usage of memory unnecessarilly.
+- Do not move the circular wall entities. This will not cause any changes to their functionality but will instead shift the mesh of the entity, if any, to the location specified while the actual collisions take place according to the original position of the entity.
+- Deletion of circular wall entities can be done using the `pewpew.entity_destroy(entity_id: int)` function with the ID of the circular wall entity.
+- If only few circular walls are required, it is better to just lay down an approximate polygonal wall instead of using this module.
